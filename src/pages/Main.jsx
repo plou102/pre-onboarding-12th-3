@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 
 const Main = () => {
@@ -8,10 +8,6 @@ const Main = () => {
   const [searchWord, setSearchWord] = useState('');
   const [autoSearchWord, setAutoSearchWord] = useState('');
   const [focusIndex, setFocusIndex] = useState(-1);
-
-  useLayoutEffect(() => {
-    if (focusRef.current !== null) focusRef.current.focus();
-  });
 
   const InputChange = e => {
     if (isAutoWord) {
