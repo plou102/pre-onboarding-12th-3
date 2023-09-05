@@ -9,11 +9,10 @@ const Main = () => {
   const [searchWord, setSearchWord] = useState('');
   const [autoSearchWord, setAutoSearchWord] = useState('');
   const [focusIndex, setFocusIndex] = useState(-1);
-  const [dataList, setDataList] = useState();
   const [searchList, setSearchList] = useState([]);
 
   useEffect(() => {
-    if (isAutoWord) return;
+    if (isAutoWord | (searchWord === '')) return;
 
     const getData = async () => {
       const list = await getSearchData(searchWord);
@@ -43,7 +42,7 @@ const Main = () => {
   };
 
   const KeyEvent = {
-    Arrowdown: () => {
+    ArrowDown: () => {
       if (searchList.length === 0) {
         return;
       }
