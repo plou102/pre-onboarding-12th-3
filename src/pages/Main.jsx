@@ -3,15 +3,67 @@ import { styled } from 'styled-components';
 
 const Main = () => {
   const focusRef = useRef(null);
+  const listRef = useRef(null);
+  const [isAutoWord, setIsAutoWord] = useState(false);
   const [searchWord, setSearchWord] = useState('');
+  const [autoSearchWord, setAutoSearchWord] = useState('');
+  const [focusIndex, setFocusIndex] = useState(-1);
 
   useLayoutEffect(() => {
     if (focusRef.current !== null) focusRef.current.focus();
-    console.log(focusRef);
   });
 
   const InputChange = e => {
+    if (isAutoWord) {
+      const enteredValue = e.nativeEvent.inputType === 'deleteContent' ? '' : e.nativeEvent.data;
+
+      focusIndex >= 0 && setSearchWord(autoSearchWord + enteredValue);
+      setIsAutoWord(false);
+      setFocusIndex(-1);
+      return;
+    }
+
     setSearchWord(e.target.value);
+  };
+
+  const InputKeyUp = e => {
+    if (KeyEvent[e.key]) KeyEvent[e.key]();
+  };
+
+  const KeyEvent = {
+    Arrowdown: () => {
+      if (autoSearchWord.length === 0) {
+        return;
+      }
+      if (listRef.current.childElementCount === focusIndex + 1) {
+        setFocusIndex(() => 0);
+        return;
+      }
+      if (focusIndex === -1) {
+        setIsAutoWord(true);
+      }
+      setFocusIndex(index => index + 1);
+      setAutoSearchWord(autoSearchWord.results[focusIndex + 1].title);
+    },
+    ArrowUp: () => {
+      if (focusIndex === -1) {
+        return;
+      }
+      if (focusIndex === 0) {
+        setAutoSearchWord('');
+        setFocusIndex(index => index - 1);
+        setIsAutoWord(false);
+        return;
+      }
+
+      setFocusIndex(index => index - 1);
+      setAutoSearchWord(autoSearchWord.results[focusIndex - 1].title);
+    },
+    Escape: () => {
+      setAutoSearchWord('');
+      setFocusIndex(-1);
+      setIsAutoWord(false);
+    },
   };
 
   return (
@@ -28,7 +80,8 @@ const Main = () => {
           placeholder="질환명을 입력해 주세요"
           ref={focusRef}
           onChange={InputChange}
-          value={searchWord}
+          onKeyUp={InputKeyUp}
+          value={isAutoWord ? autoSearchWord : searchWord}
         />
 
         <SearchBtn>검색</SearchBtn>

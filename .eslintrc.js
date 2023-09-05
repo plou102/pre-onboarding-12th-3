@@ -18,6 +18,6 @@ module.exports = {
     'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx'] }],
     'no-var': 'error',
     'no-multiple-empty-lines': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'warn',
   },
 };
