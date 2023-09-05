@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import { getSearchData } from 'api/http';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 
 const Main = () => {
@@ -8,10 +9,25 @@ const Main = () => {
   const [searchWord, setSearchWord] = useState('');
   const [autoSearchWord, setAutoSearchWord] = useState('');
   const [focusIndex, setFocusIndex] = useState(-1);
+  const [dataList, setDataList] = useState();
+  const [searchList, setSearchList] = useState([]);
+
+  useEffect(() => {
+    if (isAutoWord) return;
+
+    const getData = async () => {
+      const list = await getSearchData(searchWord);
+
+      setSearchList(list);
+    };
+
+    getData();
+  }, [searchWord]);
 
   const InputChange = e => {
     if (isAutoWord) {
-      const enteredValue = e.nativeEvent.inputType === 'deleteContent' ? '' : e.nativeEvent.data;
+      const enteredValue =
+        e.nativeEvent.inputType === 'deleteContentBackward' ? '' : e.nativeEvent.data;
 
       focusIndex >= 0 && setSearchWord(autoSearchWord + enteredValue);
       setIsAutoWord(false);
@@ -28,7 +44,7 @@ const Main = () => {
 
   const KeyEvent = {
     Arrowdown: () => {
-      if (autoSearchWord.length === 0) {
+      if (searchList.length === 0) {
         return;
       }
       if (listRef.current.childElementCount === focusIndex + 1) {
@@ -39,7 +55,7 @@ const Main = () => {
         setIsAutoWord(true);
       }
       setFocusIndex(index => index + 1);
-      setAutoSearchWord(autoSearchWord.results[focusIndex + 1].title);
+      setAutoSearchWord(searchList[focusIndex + 1].sickNm);
     },
     ArrowUp: () => {
       if (focusIndex === -1) {
@@ -53,7 +69,7 @@ const Main = () => {
       }
 
       setFocusIndex(index => index - 1);
-      setAutoSearchWord(autoSearchWord.results[focusIndex - 1].title);
+      setAutoSearchWord(searchList[focusIndex - 1].sickNm);
     },
     Escape: () => {
       setAutoSearchWord('');
@@ -82,6 +98,17 @@ const Main = () => {
 
         <SearchBtn>검색</SearchBtn>
       </SearchContent>
+
+      <SearchResultList ref={listRef}>
+        {searchList.length > 0 &&
+          searchList.map((item, idx) => {
+            return (
+              <SearchResultItem key={idx} ref={idx === focusIndex ? focusRef : undefined}>
+                {item.sickNm}
+              </SearchResultItem>
+            );
+          })}
+      </SearchResultList>
     </MainContent>
   );
 };
@@ -128,3 +155,7 @@ const SearchBtn = styled.button`
   top: 4px;
   z-index: 1;
 `;
+
+const SearchResultList = styled.div``;
+
+const SearchResultItem = styled.div``;
