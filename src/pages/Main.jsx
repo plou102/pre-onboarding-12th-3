@@ -18,9 +18,14 @@ const Main = () => {
   );
 
   const getData = async value => {
-    const list = await getSearchData(value);
+    const savedWord = sessionStorage.getItem(`${value}`);
 
-    setSearchList(list);
+    if (JSON.parse(savedWord)) {
+      setSearchList(JSON.parse(savedWord));
+    } else {
+      const list = await getSearchData(value);
+      setSearchList(list);
+    }
   };
 
   useEffect(() => {
