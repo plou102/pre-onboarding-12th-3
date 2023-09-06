@@ -2,6 +2,7 @@ import { getSearchData } from 'api/http';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import { debounce } from 'lodash';
+import RecommendedWord from 'components/RecommendedWord';
 
 const Main = () => {
   const focusRef = useRef(null);
@@ -19,13 +20,28 @@ const Main = () => {
 
   const getData = async value => {
     const savedWord = sessionStorage.getItem(`${value}`);
+    const isDelete = JSON.parse(savedWord) && DeleteSession(value);
 
     if (JSON.parse(savedWord)) {
-      setSearchList(JSON.parse(savedWord));
-    } else {
+      !isDelete && setSearchList(JSON.parse(savedWord).list);
+    } else if (isDelete | !JSON.parse(savedWord)) {
       const list = await getSearchData(value);
       setSearchList(list);
     }
+  };
+
+  const DeleteSession = value => {
+    const sessionData = sessionStorage.getItem(`${value}`);
+
+    const item = JSON.parse(sessionData);
+    const now = new Date().getTime();
+
+    if (now > item.time) {
+      sessionStorage.removeItem(`${value}`);
+      return true;
+    }
+
+    return false;
   };
 
   useEffect(() => {
@@ -114,13 +130,13 @@ const Main = () => {
         {searchList.length > 0 ? (
           searchList.map((item, idx) => {
             return (
-              <SearchResultItem
-                key={idx}
+              <RecommendedWord
+                key={item.sickCd}
+                item={item}
+                idx={idx}
+                focusIndex={focusIndex}
                 ref={idx === focusIndex ? focusRef : undefined}
-                bgcolor={`${idx === focusIndex}`}
-              >
-                {item.sickNm}
-              </SearchResultItem>
+              />
             );
           })
         ) : (
@@ -190,9 +206,4 @@ const SearchResultList = styled.div`
     color: #a7afb7;
     margin: 0.6rem;
   }
-`;
-
-const SearchResultItem = styled.div`
-  padding: 0.8rem;
-  background-color: ${props => props.bgcolor === 'true' && '#E6E6E6'};
 `;
