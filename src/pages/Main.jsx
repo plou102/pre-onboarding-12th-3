@@ -1,6 +1,7 @@
 import { getSearchData } from 'api/http';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
+import { debounce } from 'lodash';
 
 const Main = () => {
   const focusRef = useRef(null);
@@ -11,16 +12,21 @@ const Main = () => {
   const [focusIndex, setFocusIndex] = useState(-1);
   const [searchList, setSearchList] = useState([]);
 
+  const Debounce = useCallback(
+    debounce(value => getData(value), 500),
+    [],
+  );
+
+  const getData = async value => {
+    const list = await getSearchData(value);
+
+    setSearchList(list);
+  };
+
   useEffect(() => {
     if (isAutoWord | (searchWord === '')) return;
 
-    const getData = async () => {
-      const list = await getSearchData(searchWord);
-
-      setSearchList(list);
-    };
-
-    getData();
+    Debounce(searchWord);
   }, [searchWord]);
 
   const InputChange = e => {
@@ -98,15 +104,23 @@ const Main = () => {
         <SearchBtn>검색</SearchBtn>
       </SearchContent>
 
-      <SearchResultList ref={listRef}>
-        {searchList.length > 0 &&
+      <SearchResultList ref={listRef} display={`${searchWord === ''}`}>
+        <p>추천검색어</p>
+        {searchList.length > 0 ? (
           searchList.map((item, idx) => {
             return (
-              <SearchResultItem key={idx} ref={idx === focusIndex ? focusRef : undefined}>
+              <SearchResultItem
+                key={idx}
+                ref={idx === focusIndex ? focusRef : undefined}
+                bgcolor={`${idx === focusIndex}`}
+              >
                 {item.sickNm}
               </SearchResultItem>
             );
-          })}
+          })
+        ) : (
+          <p>검색어가 존재하지 않습니다.</p>
+        )}
       </SearchResultList>
     </MainContent>
   );
@@ -122,20 +136,23 @@ const Title = styled.h1`
   line-height: 3rem;
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 `;
 
 const SearchContent = styled.div`
   position: relative;
+  height: 2rem;
 `;
 
 const DiseaseInput = styled.input`
-  width: 60%;
+  position: absolute;
+  width: 30rem;
   height: 3rem;
   border: none;
   border-radius: 50px;
   padding: 0 1rem;
   font-size: 1.3rem;
+  transform: translate(-50%, -50%);
 
   ::placeholder {
     color: #a7afb7;
@@ -150,11 +167,27 @@ const SearchBtn = styled.button`
   border: none;
   background-color: #007be9;
   color: #fff;
-  right: 130px;
-  top: 4px;
+  transform: translate(530%, -50%);
   z-index: 1;
 `;
 
-const SearchResultList = styled.div``;
+const SearchResultList = styled.div`
+  margin: 0 auto;
+  background-color: #fff;
+  width: 30rem;
+  padding: 1rem;
+  border-radius: 20px;
+  text-align: left;
+  display: ${props => props.display === 'true' && 'none'};
 
-const SearchResultItem = styled.div``;
+  p {
+    font-size: 0.9rem;
+    color: #a7afb7;
+    margin: 0.6rem;
+  }
+`;
+
+const SearchResultItem = styled.div`
+  padding: 0.8rem;
+  background-color: ${props => props.bgcolor === 'true' && '#E6E6E6'};
+`;

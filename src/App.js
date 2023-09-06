@@ -17,6 +17,7 @@ export default App;
 const AppContent = styled.div`
   background-color: #cae9ff;
   width: 50%;
-  height: 100%;
+  height: 100vh;
   margin: 0 auto;
+  padding-top: 3rem;
 `;
