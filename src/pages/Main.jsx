@@ -20,11 +20,11 @@ const Main = () => {
 
   const getData = async value => {
     const savedWord = sessionStorage.getItem(`${value}`);
-    const isDelete = JSON.parse(savedWord) && DeleteSession(value);
+    const isDelete = JSON.parse(savedWord) ? DeleteSession(value) : null;
 
-    if (JSON.parse(savedWord)) {
+    if (JSON.parse(savedWord) && !isDelete) {
       !isDelete && setSearchList(JSON.parse(savedWord).list);
-    } else if (isDelete | !JSON.parse(savedWord)) {
+    } else if (isDelete || !JSON.parse(savedWord)) {
       const list = await getSearchData(value);
       setSearchList(list);
     }
@@ -81,7 +81,7 @@ const Main = () => {
         setIsAutoWord(true);
       }
       setFocusIndex(index => index + 1);
-      setAutoSearchWord(searchList[focusIndex + 1].sickNm);
+      setAutoSearchWord(searchList[focusIndex + 1]?.sickNm);
     },
     ArrowUp: () => {
       if (focusIndex === -1) {
@@ -130,13 +130,7 @@ const Main = () => {
         {searchList.length > 0 ? (
           searchList.map((item, idx) => {
             return (
-              <RecommendedWord
-                key={item.sickCd}
-                item={item}
-                idx={idx}
-                focusIndex={focusIndex}
-                ref={idx === focusIndex ? focusRef : undefined}
-              />
+              <RecommendedWord key={item.sickCd} item={item} idx={idx} focusIndex={focusIndex} />
             );
           })
         ) : (

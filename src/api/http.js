@@ -15,5 +15,6 @@ export const getSearchData = async keyword => {
       sessionStorage.setItem(`${keyword}`, JSON.stringify(sessionData));
       return res.data;
     })
+    .catch(e => alert(e))
     .finally(console.info('calling api'));
 };
