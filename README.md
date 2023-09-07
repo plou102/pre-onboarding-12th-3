@@ -1,70 +1,98 @@
-# Getting Started with Create React App
+# 프리온보딩 검색창 만들기
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+검색창 구현 + 검색어 추천 기능 구현 + 캐싱 기능 구현
 
-## Available Scripts
+<br />
 
-In the project directory, you can run:
+## 목차
 
-### `npm start`
+- [🐼 만든 사람](#만든-사람)
+- [🛠️ 기술 스택](#기술-스택)
+- [💻 실행 방법](#실행-방법)
+- [📂 폴더 구조](#폴더-구조)
+- [📚 과제 수행 내용](#📚-과제-수행-내용)
+  - [질환명 검색시 API 호출 통해서 검색어 추천 기능 구현](#질환명-검색시-api-호출-통해서-검색어-추천-기능-구현)
+  - [API 호출별로 로컬 캐싱 구현](#api-호출별로-로컬-캐싱-구현)
+  - [API 호출 횟수를 줄이는 전략 수립 및 실행](#api-호출-횟수를-줄이는-전략-수립-및-실행)
+  - [키보드만으로 추천 검색어들로 이동 가능하도록 구현](#키보드만으로-추천-검색어들로-이동-가능하도록-구현)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🐼 만든 사람
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- 박정민
 
-### `npm test`
+<br />
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠️ 기술 스택
 
-### `npm run build`
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=flat&logo=axios&logoColor=white"> <img src="https://img.shields.io/badge/Styled Components-DB7093?style=flat&logo=styled-components&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=flat&logo=react router&logoColor=white">
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<img src="https://img.shields.io/badge/ESlint-4B32C3?style=flat&logo=eslint&logoColor=white"> <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=black">
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<br />
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 💻 실행 방법
 
-### `npm run eject`
+[api repo](https://github.com/walking-sunset/assignment-api)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```zsh
+$ npm install
+$ npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- api repo와 해당 repo 모두 git clone후, 위의 명령어를 순서대로 실행하면 프로젝트를 이용하실 수 있습니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<br />
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📂 폴더 구조
 
-## Learn More
+```
+📦pre-onboarding-12th-3
+ ┃
+ ┣ 📂src
+ ┃ ┣ 📂api
+ ┃ ┃ ┗ 📜http.js
+ ┃ ┣ 📂components
+ ┃ ┃ ┣ 📜RecommendedWord.jsx
+ ┃ ┃ ┗ 📜SearchInput.jsx
+ ┃ ┣ 📂constants
+ ┃ ┃ ┗ 📜cache.js
+ ┃ ┣ 📂pages
+ ┃ ┃ ┗ 📜Main.jsx
+ ┃ ┣ 📂utils
+ ┃ ┃ ┗ 📜RemoveSession.js
+ ┃ ┣ 📜App.css
+ ┃ ┣ 📜App.js
+ ┃ ┣ 📜App.test.js
+ ┃ ┣ 📜index.css
+ ┃ ┣ 📜index.js
+ ┃ ┣ 📜reportWebVitals.js
+ ┃ ┗ 📜setupTests.js
+ ┣ 📜.eslintrc.js
+ ┣ 📜.gitignore
+ ┣ 📜.prettierrc.js
+ ┣ 📜README.md
+ ┣ 📜jsconfig.json
+ ┣ 📜package-lock.json
+ ┗ 📜package.json
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<br />
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📚 과제 수행 내용
 
-### Code Splitting
+### 질환명 검색시 API 호출 통해서 검색어 추천 기능 구현
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 검색어가 없을 시 "검색어 없음" 표출
 
-### Analyzing the Bundle Size
+<img src="https://github.com/plou102/pre-onboarding-12th-2/assets/107393773/6f32c0db-b40f-4fc2-8a6b-9ae68b6527a3" width="500" height="300" />
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<br />
 
-### Making a Progressive Web App
+- `input`에 입력되는 텍스트에 따라 API를 호출하도록 구현하였습니다.
+- API 호출을 통해 받아온 데이터는 `state`에 저장한 후 보여주도록 구현하였습니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### API 호출별로 로컬 캐싱 구현
 
-### Advanced Configuration
+### API 호출 횟수를 줄이는 전략 수립 및 실행
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 키보드만으로 추천 검색어들로 이동 가능하도록 구현
