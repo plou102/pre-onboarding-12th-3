@@ -14,7 +14,7 @@ const Main = () => {
   const [searchList, setSearchList] = useState([]);
 
   const Debounce = useCallback(
-    debounce(value => getData(value), 500),
+    debounce(value => getData(value), 1000),
     [],
   );
 
