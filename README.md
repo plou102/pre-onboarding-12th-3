@@ -56,17 +56,19 @@ $ npm start
  ┃ ┃ ┗ 📜SearchInput.jsx
  ┃ ┣ 📂constants
  ┃ ┃ ┗ 📜cache.js
+ ┃ ┣ 📂context
+ ┃ ┃ ┣ 📜KeywordContext.jsx
+ ┃ ┃ ┗ 📜ListContext.jsx
+ ┃ ┣ 📂hooks
+ ┃ ┃ ┗ 📜useKeyEvent.js
  ┃ ┣ 📂pages
  ┃ ┃ ┗ 📜Main.jsx
  ┃ ┣ 📂utils
  ┃ ┃ ┗ 📜RemoveSession.js
  ┃ ┣ 📜App.css
  ┃ ┣ 📜App.js
- ┃ ┣ 📜App.test.js
  ┃ ┣ 📜index.css
- ┃ ┣ 📜index.js
- ┃ ┣ 📜reportWebVitals.js
- ┃ ┗ 📜setupTests.js
+ ┃ ┗ 📜index.js
  ┣ 📜.eslintrc.js
  ┣ 📜.gitignore
  ┣ 📜.prettierrc.js
@@ -92,7 +94,7 @@ $ npm start
 - API 호출을 통해 받아온 데이터는 `state`에 저장한 후 보여주도록 구현하였습니다.
 
 ```js
-// src/pages/Main.jsx
+// src/context/ListContext.jsx
 
 const [searchList, setSearchList] = useState([]);
 
@@ -104,8 +106,9 @@ const getData = async value => {
       setSearchList(list);
     }
   };
-
-  (...)
+```
+```js
+// src/pages/Main.jsx
 
 return (
 
@@ -232,9 +235,29 @@ useEffect(() => {
 ```js
 // src/components/SearchInput.jsx
 
+  const KeyHandler = useKeyEvent({ listRef, setIsAutoWord });
   const InputKeyUp = e => {
-    if (KeyEvent[e.key]) KeyEvent[e.key]();
+    const handler = KeyHandler[e.key];
+
+    if (handler) handler();
   };
+
+return (
+
+  (...)
+
+  <DiseaseInput
+    type="text"
+    placeholder="질환명을 입력해 주세요"
+    ref={focusRef}
+    onChange={InputChange}
+    onKeyUp={InputKeyUp}
+    value={isAutoWord ? autoSearchWord : searchWord}
+  />
+)
+```
+```js
+// src/hooks/useKeyEvent.js
 
   const KeyEvent = {
     ArrowDown: () => {
@@ -271,19 +294,5 @@ useEffect(() => {
       setIsAutoWord(false);
     },
   };
-
-return (
-
-  (...)
-
-  <DiseaseInput
-    type="text"
-    placeholder="질환명을 입력해 주세요"
-    ref={focusRef}
-    onChange={InputChange}
-    onKeyUp={InputKeyUp}
-    value={isAutoWord ? autoSearchWord : searchWord}
-  />
-)
 
 ```
