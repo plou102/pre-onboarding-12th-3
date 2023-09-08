@@ -90,6 +90,7 @@ $ npm start
 
 - `input`에 입력되는 텍스트에 따라 API를 호출하도록 구현하였습니다.
 - API 호출을 통해 받아온 데이터는 `state`에 저장한 후 보여주도록 구현하였습니다.
+
 ```js
 // src/pages/Main.jsx
 
@@ -124,9 +125,11 @@ return (
       </SearchResultList>
 );
 ```
+
 <br />
 
 ### API 호출별로 로컬 캐싱 구현
+
 - 캐싱 기능을 제공하는 라이브러리 사용 금지
 - expire time을 구현할 경우 가산점
 
@@ -137,11 +140,13 @@ return (
 
 - 로컬 캐싱을 구현하기 위해 `SessionStorage`를 사용하였습니다.
 - 캐시 `Expire time`을 구현하였습니다.
+
 ```js
 // src/constants/cache.js
 
 export const EXPIRE_TIME = 1000 * 60 * 5; // 5분
 ```
+
 ```js
 // src/api/http.js
 
@@ -165,6 +170,7 @@ export const getSearchData = async keyword => {
     .finally(console.info('calling api')); // api가 호출될 때마다 console.info 출력
 };
 ```
+
 ```js
 // src/utils/RemoveSession.js
 
@@ -174,7 +180,8 @@ export const DeleteSession = value => {
   const item = JSON.parse(sessionData);
   const now = new Date().getTime();
 
-  if (now > item.time) { // 현재 시간이 Storage의 value-time 보다 크다면 데이터 삭제 실행 후 api 호출
+  if (now > item.time) {
+    // 현재 시간이 Storage의 value-time 보다 크다면 데이터 삭제 실행 후 api 호출
     sessionStorage.removeItem(`${value}`);
     return true;
   }
@@ -182,6 +189,7 @@ export const DeleteSession = value => {
   return false; // if문이 실행되지 않았다면 false 반환
 };
 ```
+
 <br />
 
 ### API 호출 횟수를 줄이는 전략 수립 및 실행
@@ -189,7 +197,9 @@ export const DeleteSession = value => {
 <img src="https://github.com/plou102/pre-onboarding-12th-2/assets/107393773/2d25763c-aa9e-404d-a04a-95476b7dca15" width="700" height="400" />
 
 <br /><br />
+
 - `lodash`라이브러리의 `debounce`를 사용하여 1초마다 api를 호출할 수 있도록 구현하였습니다.
+
 ```js
 // src/pages/Main.jsx
 
@@ -218,6 +228,7 @@ useEffect(() => {
 
 - 위, 아래 방향키로 이동하여 추천 검색어들로 이동이 가능하도록 키보드 네비게이션을 구현하였습니다.
 - 이동할 때마다 `input`에 자동완성이 되도록 구현하였습니다.
+
 ```js
 // src/components/SearchInput.jsx
 

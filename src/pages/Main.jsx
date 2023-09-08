@@ -1,33 +1,20 @@
-import { getSearchData } from 'api/http';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { styled } from 'styled-components';
 import { debounce } from 'lodash';
 import RecommendedWord from 'components/RecommendedWord';
-import { DeleteSession } from 'utils/RemoveSession';
 import SearchInput from 'components/SearchInput';
+import KeywordContext from 'context/KeywordContext';
+import ListContext from 'context/ListContext';
 
 const Main = () => {
   const listRef = useRef(null);
-  const [searchWord, setSearchWord] = useState('');
-  const [focusIndex, setFocusIndex] = useState(-1);
-  const [searchList, setSearchList] = useState([]);
+  const { searchWord, focusIndex } = useContext(KeywordContext);
+  const { searchList, getData } = useContext(ListContext);
 
   const Debounce = useCallback(
     debounce(value => getData(value), 1000),
     [],
   );
-
-  const getData = async value => {
-    const savedWord = sessionStorage.getItem(`${value}`);
-    const isDelete = JSON.parse(savedWord) ? DeleteSession(value) : null;
-
-    if (JSON.parse(savedWord) && !isDelete) {
-      !isDelete && setSearchList(JSON.parse(savedWord).list);
-    } else if (isDelete || !JSON.parse(savedWord)) {
-      const list = await getSearchData(value);
-      setSearchList(list);
-    }
-  };
 
   useEffect(() => {
     if (searchWord === '') return;
@@ -43,14 +30,7 @@ const Main = () => {
         온라인으로 참여하기
       </Title>
 
-      <SearchInput
-        focusIndex={focusIndex}
-        setFocusIndex={setFocusIndex}
-        searchWord={searchWord}
-        setSearchWord={setSearchWord}
-        listRef={listRef}
-        searchList={searchList}
-      />
+      <SearchInput listRef={listRef} searchList={searchList} />
 
       <SearchResultList ref={listRef} display={`${searchWord === ''}`}>
         <p>추천검색어</p>

@@ -1,17 +1,13 @@
-import React, { useRef, useState } from 'react';
+import KeywordContext from 'context/KeywordContext';
+import useKeyEvent from 'hooks/useKeyEvent';
+import React, { useContext, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 
-const SearchInput = ({
-  focusIndex,
-  setFocusIndex,
-  searchWord,
-  setSearchWord,
-  listRef,
-  searchList,
-}) => {
+const SearchInput = ({ listRef }) => {
   const focusRef = useRef(null);
   const [isAutoWord, setIsAutoWord] = useState(false);
-  const [autoSearchWord, setAutoSearchWord] = useState('');
+  const { searchWord, setSearchWord, autoSearchWord, focusIndex, setFocusIndex } =
+    useContext(KeywordContext);
 
   const InputChange = e => {
     if (isAutoWord) {
@@ -27,44 +23,11 @@ const SearchInput = ({
     setSearchWord(e.target.value);
   };
 
+  const KeyHandler = useKeyEvent({ listRef, setIsAutoWord });
   const InputKeyUp = e => {
-    if (KeyEvent[e.key]) KeyEvent[e.key]();
-  };
+    const handler = KeyHandler[e.key];
 
-  const KeyEvent = {
-    ArrowDown: () => {
-      if (searchList.length === 0) {
-        return;
-      }
-      if (listRef.current.childElementCount === focusIndex + 1) {
-        setFocusIndex(() => 0);
-        return;
-      }
-      if (focusIndex === -1) {
-        setIsAutoWord(true);
-      }
-      setFocusIndex(index => index + 1);
-      setAutoSearchWord(searchList[focusIndex + 1]?.sickNm);
-    },
-    ArrowUp: () => {
-      if (focusIndex === -1) {
-        return;
-      }
-      if (focusIndex === 0) {
-        setAutoSearchWord('');
-        setFocusIndex(index => index - 1);
-        setIsAutoWord(false);
-        return;
-      }
-
-      setFocusIndex(index => index - 1);
-      setAutoSearchWord(searchList[focusIndex - 1].sickNm);
-    },
-    Escape: () => {
-      setAutoSearchWord('');
-      setFocusIndex(-1);
-      setIsAutoWord(false);
-    },
+    if (handler) handler();
   };
 
   return (
